@@ -1,4 +1,8 @@
-import {} from 'mobx';
+import { ObservableMap } from 'mobx';
+
+import { Thread, State } from './thread';
+
+import { Knot } from '../tools';
 
 export class Article {
   id: number;
@@ -16,21 +20,25 @@ export class Article {
   }
 }
 
-export const articleStore: Map<number, Article> = new Map();
+export const articleStore: ObservableMap<Thread<Article>> = new ObservableMap<Thread<Article>>();
 
 export const actions = {
   fetch(groupId: number):void {
-    for (let i = 0; i< 10; i++)
-    articleStore.set(i + groupId * 100, new Article(i + groupId * 100, groupId));
+    for (let i = 0; i< 10; i++) {
+      const id = i + groupId * 100;
+      const a = new Thread<Article>(new Article(id, groupId));
+      a.state = State.loading;
+      articleStore.set((i + groupId * 100).toString(), a);
+      setTimeout(() => {
+        const val = articleStore.get(id.toString());
+        val.state = State.done;
+        val.value = new Article(id, groupId);
+      }, 5000 * Math.random());
+  }
   }
 }
 
-export const calcStat = (arts: Article[]) => {
-  let total = 0;
-  let change = 0;
-  for (const art of arts) {
-    total += art.val;
-    change += art.prev - art.val; 
-  }
-  return {total, change};
+
+export const calcStat = (art: Article, acc: {total: number, change: number}) => {
+  return {total: acc.total + art.val, change: acc.change + art.prev};
 }
