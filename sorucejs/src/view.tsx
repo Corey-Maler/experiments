@@ -12,6 +12,7 @@ class App extends React.Component<{state: any, dispatch: fn}, {}> {
             <h1>Number {this.props.state}</h1>
             <button onClick={() => this.props.dispatch('+')}>inc</button>
             <button onClick={() => this.props.dispatch('-')}>dec</button>
+            <button onClick={() => this.props.dispatch('random')}>random</button>
         </div>);
     }
 }
