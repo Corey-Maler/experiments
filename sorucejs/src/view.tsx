@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { render } from 'react-dom';
 
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { Connect, ReactDriver } from './ReactDriver';
 
-type fn = (a: any) => void;
+class DisplayPure extends React.Component<{result: any}, {}> {
+    public render() {
+        return <h1>Display: {this.props.result}</h1>;
+    }
+}
 
-class App extends React.Component<{state: any, dispatch: fn}, {}> {
+class ButtonsPure extends React.Component<{dispatch: any}, {}> {
     public render() {
         return (<div>
-            <h1>Number {this.props.state}</h1>
             <button onClick={() => this.props.dispatch('+')}>inc</button>
             <button onClick={() => this.props.dispatch('-')}>dec</button>
             <button onClick={() => this.props.dispatch('random')}>random</button>
@@ -18,18 +20,16 @@ class App extends React.Component<{state: any, dispatch: fn}, {}> {
     }
 }
 
-export const View = (actions$, state$: Observable<any>) => {
-    const d = document.getElementById('root');
+const Display = Connect((a) => ({result: a}))(DisplayPure);
+const Buttons = Connect((a) => {{}})(ButtonsPure);
 
-    const acts = new Subject<any>();
-
-    const dispatch = (action) => {
-        acts.next(action);
+class App extends React.Component<{}, {}> {
+    public render() {
+        return (<div>
+            <Display />
+            <Buttons />
+       </div>);
     }
-
-    state$.subscribe(state => {
-        render(<App state={state} dispatch={dispatch} />, d);
-    });
-
-    return { actions: acts.do(v => console.log('action from VIEW: ', v))};
 }
+
+export const View = ReactDriver(App, document.getElementById('root'));

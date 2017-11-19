@@ -13,10 +13,10 @@ module.exports = {
     publicPath: '/static/'
   },
   resolve: {
-    extensions: ['', '.js', '.ts', '.tsx']
+    extensions: ['.js', '.ts', '.tsx']
   },
   module: {
-    loaders: [{
+    rules: [{
       test: /\.tsx?$/,
       loaders: ['awesome-typescript-loader'],
       include: path.join(__dirname, 'src')
