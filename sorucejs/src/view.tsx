@@ -13,11 +13,12 @@ class App extends React.Component<{state: any, dispatch: fn}, {}> {
             <button onClick={() => this.props.dispatch('+')}>inc</button>
             <button onClick={() => this.props.dispatch('-')}>dec</button>
             <button onClick={() => this.props.dispatch('random')}>random</button>
+            <button onClick={() => this.props.dispatch('load')}>load</button>
         </div>);
     }
 }
 
-export const View = (state$: Observable<any>) => {
+export const View = (actions$, state$: Observable<any>) => {
     const d = document.getElementById('root');
 
     const acts = new Subject<any>();
@@ -30,5 +31,5 @@ export const View = (state$: Observable<any>) => {
         render(<App state={state} dispatch={dispatch} />, d);
     });
 
-    return acts;
+    return { actions: acts.do(v => console.log('action from VIEW: ', v))};
 }

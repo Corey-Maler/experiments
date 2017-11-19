@@ -1,18 +1,10 @@
 import { View } from './view';
-import { reducer } from './reducers';
+import { reducers } from './reducers';
 
 import { actions } from './action';
 
-import { Application } from './tools';
+import { Application, combine, makeReducer } from './tools';
 
-
-
-const App = new Application({
-    drivers: [View],
-    reducer,
-    actions,
-    },
-    0
-);
+const App = new Application(combine(actions, View, reducers), 0);
 
 App.run();
